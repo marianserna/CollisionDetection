@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Detect Collision</title>
+    <style media="screen">
+      body {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+
+    <script type="text/javascript">
+      window.addEventListener('load', () => {
+        const canvas = document.getElementById('canvas');
+        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
+        const ctx = canvas.getContext('2d');
+
+        class Ball {
+          constructor(ctx, color) {
+            this.ctx = ctx;
+            this.x = Math.floor(Math.random() * window.innerWidth);
+            this.y = 50;
+            this.radius = 25;
+            this.color = color;
+            this.gravity = (Math.floor(Math.random() * 100) + 1) / 100;
+            this.velocity = 0;
+            this.wind = 0;
+          }
+
+          update() {
+            // Control Y property
+            if (this.y > window.innerHeight) {
+              this.velocity *= -1;
+              this.y = window.innerHeight;
+            }
+            this.velocity += this.gravity;
+            this.y += this.velocity;
+
+            // Control X property
+            this.x += this.wind;
+            this.x = Math.min(this.x, window.innerWidth);
+            this.x = Math.max(0, this.x);
+          }
+
+          draw() {
+            this.ctx.beginPath();
+            this.ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+            this.ctx.fillStyle = this.color;
+            this.ctx.fill();
+          }
+        }
+
+        const specialBall = new Ball(ctx, '#9068BE');
+        const balls = [];
+        const colors = ['#A2FAA3', '#92C9B1', '#F2F5EA', '#F05D5E', '#F13030', '#FFC857'];
+
+        for (let i = 0; i < 10; i++) {
+          balls.push(new Ball(ctx, colors[Math.floor(Math.random() * colors.length)]));
+        }
+
+        window.addEventListener('deviceorientation', (e) => {
+          specialBall.wind = e.gamma / 2;
+        });
+
+        const drawFrame = () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          specialBall.update();
+          specialBall.draw();
+          balls.forEach((ball) => {
+            ball.update();
+            ball.draw();
+          });
+          // instead of set interval
+          // window.requestAnimationFrame(drawFrame);
+        };
+
+        window.requestAnimationFrame(drawFrame);
+
+        const detectCollision = (ballA, ballB) => {
+          
+        }
+
+      });
+
+
+    </script>
+  </body>
+</html>
