@@ -44,15 +44,24 @@
 
             // Control X property
             this.x += this.wind;
+            // Out of these 2 values, pick the minimum
             this.x = Math.min(this.x, window.innerWidth);
             this.x = Math.max(0, this.x);
           }
 
           draw() {
+            this.update();
             this.ctx.beginPath();
             this.ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
             this.ctx.fillStyle = this.color;
             this.ctx.fill();
+          }
+
+          detectCollision(otherBall) {
+            const diffX = Math.abs(this.x - otherBall.x);
+            const diffY = Math.abs(this.y - otherBall.y);
+
+            return diffX <= 50 && diffY <= 50;
           }
         }
 
@@ -70,21 +79,18 @@
 
         const drawFrame = () => {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
-          specialBall.update();
           specialBall.draw();
-          balls.forEach((ball) => {
-            ball.update();
+          balls.forEach((ball, index) => {
             ball.draw();
+            if (specialBall.detectCollision(ball)) {
+              balls.splice(index, 1);
+            }
           });
           // instead of set interval
-          // window.requestAnimationFrame(drawFrame);
+          window.requestAnimationFrame(drawFrame);
         };
 
         window.requestAnimationFrame(drawFrame);
-
-        const detectCollision = (ballA, ballB) => {
-          
-        }
 
       });
 
